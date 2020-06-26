@@ -1,0 +1,279 @@
+---
+title: "Breastfeeding Structural"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+  always_allow_html: yes
+header-includes:
+- \usepackage{fullpage}
+- \usepackage{graphicx}
+- \usepackage{subcaption}
+- \usepackage{float}
+- \usepackage{placeins}
+- \usepackage{caption}
+- \usepackage{mathtools}
+# - \usepackage{rotating}
+- \usepackage{multirow}
+- \usepackage{amssymb}
+- \usepackage{amsmath}
+- \usepackage{bigstrut}
+- \usepackage{geometry}
+# - \usepackage{longtable}
+# - \usepackage{lscape}
+- \usepackage{pdflscape}
+- \setlength{\parskip}{1em}
+---
+
+<!-- R Markdown -->
+
+<!-- This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>. -->
+
+<!-- When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this: -->
+
+<!-- Note: the first statement is the langauge (i.e., r), then the label for the chunck. After this you can put extra statements like echo (show code and outcome), include (show outcome) -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(tidy = TRUE, tidy.opts = list(comment = FALSE), echo = TRUE, fig.width=6, fig.height=4, fig.path='BreastFeeding_Hipp/fig-', echo=FALSE, warning=FALSE, message=FALSE, comment = NA)
+```
+
+<!-- load startup file and any extra packages -->
+```{r load, echo=FALSE, include=FALSE}
+source('BreastFeeding_Hipp_setup.R')
+library(knitr)
+options(knitr.table.format = "latex")
+library(kableExtra)
+
+```
+
+<!-- The number of hashtags (#) will determine the boldness of heading -->
+#Participant Characteristics
+
+##By Sex
+
+\begin{table}[ht!]
+\begin{tabular}{lll@{\hspace{5pt}}ll@{\hspace{5pt}}l}
+  \hline
+  & \multicolumn{1}{c}{Full Sample} && \multicolumn{1}{c}{Boys} && \multicolumn{1}{c}{Girsl} \bigstrut[t] \\
+  \cline{2-2} \cline{4-4} \cline{6-6}
+  Total\scriptsize{(\textit{N})} & 149  && 73  && 76  \\
+  Age \scriptsize{(\textit{Mean [range], yrs})} & 9.0 [7.1 - 12.0] && 9.0 [7.1 - 12.0] && 9.0 [7.1 - 11.8] \\
+  BMI \scriptsize{(\textit{Mean [range]})} & 17.8 [13.8 - 31.9] && 17.7 [13.9 - 31.9] &&  17.9 [13.8 - 25.9] \\
+  Percent of CDC 85th \%tile \scriptsize{(\textit{Mean [range]})} & 94.0 [70.1 - 168.8] && 94.7 [72.7 - 168.8] && 93.4  [70.1 - 131.1] \\
+  BMI \%tile \scriptsize{(\textit{Mean [range]})} & 59.9 [5 - 99] && 59.3 [5 - 99] && 60.5  [6.1 - 98] \\
+  Obesity Status\scriptsize{(\textit{N})} &  &&   &&  \\
+    \hspace{10pt} Obese              & 41 && 9 && 11 \\
+    \hspace{10pt} Not Obese         & 129 && 64 && 65 \\
+  Weight Class\scriptsize{(\textit{N})} &  &&   &&  \\
+    \hspace{10pt} Obese              & 20 && 9  && 11 \\
+    \hspace{10pt} Overweight         & 21 && 10 && 11 \\
+    \hspace{10pt} Healthy Weight     & 108 && 54 && 54 \\
+  Ethnicity\scriptsize{(\textit{N})}&  &&   &&   \\
+    \hspace{10pt} Hispanic/Latino    & 6 && 3   &&  3  \\
+    \hspace{10pt} Not H/L             & 120 && 59  &&  61  \\
+    \hspace{10pt} NA                  & 1 && 1   &&  0  \\
+  Race\scriptsize{(\textit{N})} &  &&   &&  \\
+    \hspace{10pt} Black/AA      & 7 && 5  &&  2 \\
+    \hspace{10pt} White         & 136 && 64  && 72 \\
+    \hspace{10pt} Other/Mixed   & 6 && 4  &&  2 \\
+    \hspace{10pt} NA            & 0 && 0  &&  0 \\
+  SES\scriptsize{(\textit{N})}        &  &&   &&   \\
+    \hspace{10pt} $>$\$100,000         & 49  && 26 && 23\\
+    \hspace{10pt} \$50,000-\$100,000   & 69 && 30 && 39\\
+    \hspace{10pt} $<$\$50,000          & 28  && 16 && 12\\
+    \hspace{10pt} NA                    & 0 && 0 && 0\\
+  Maternal Education\scriptsize{(\textit{N})} &  &&   &&  \\
+    \hspace{10pt} $>BA$                        & 50 && 22  &&  28 \\
+    \hspace{10pt} $BA$                         & 54  && 30  &&  24 \\
+    \hspace{10pt} $Associates/Technical$       & 18  && 7  &&   11 \\
+    \hspace{10pt} $High School$                & 15  && 8  &&   7  \\
+    \hspace{10pt} $Other/NA$                   & 0  && 0   &&  0  \\
+    \hspace{10pt} $<High School Diploma/GED$   & 0  && 0  &&   0  \\
+  Paternal Education\scriptsize{(\textit{N})} &  &&   &&  \\
+    \hspace{10pt} $>BA$                        & 57 && 28  &&  29 \\
+    \hspace{10pt} $BA$                         & 38  && 22  &&  16 \\
+    \hspace{10pt} $Associates/Technical$       & 15  && 5  &&   10 \\
+    \hspace{10pt} $High School$                & 23  && 9  &&   14 \\
+    \hspace{10pt} $Other/NA$                   & 1  && 1  &&   0 \\
+    \hspace{10pt} $<High School Diploma/GED$   & 1  && 1  &&   0 \\
+  BreastFed 6mo\scriptsize{(\textit{N})} &  &&   &&  \\
+    \hspace{10pt} $>6 months $     & 92 && 45  && 47               \\
+    \hspace{10pt} $<6 months $     & 57 &&  28 && 29        \\
+  BreastFed 3cat\scriptsize{(\textit{N})} &  &&   &&  \\
+    \hspace{10pt} $>6 months $   & 54 && 24  && 30               \\
+    \hspace{10pt} $4-6 months $           & 55 && 29  &&  26       \\
+    \hspace{10pt} $0-3 months $   & 40 && 20 && 20 \\
+  \hline
+\end{tabular}
+\end{table}
+
+\FloatBarrier
+\clearpage
+
+##By Breastfeeding Categories
+
+\begin{table}[ht!]
+\begin{tabular}{lll@{\hspace{5pt}}ll@{\hspace{5pt}}ll@{\hspace{5pt}}l}
+  \hline
+  & \multicolumn{1}{c}{Full Sample} && \multicolumn{1}{c}{0-3mo} && \multicolumn{1}{c}{4-6 mo} && \multicolumn{1}{c}{>6mo}\bigstrut[t] \\
+  \cline{2-2} \cline{4-4} \cline{6-6} \cline{8-8}
+   Total\scriptsize{(\textit{N})} &  149 && 40  && 55 && 54 \\
+  Age \scriptsize{(\textit{Mean [range], yrs})} & 9.0 [7.1 - 12] && 9.0 [7.1 - 10.9] && 9.2 [7.2 - 12.0] && 8.8 [7.1 - 11.8]\\
+  BMI \scriptsize{(\textit{Mean [range]})} & 17.8 [13.8 - 31.9] && 18.5 [14.4 - 25.9] && 17.4 [14.1 - 27.7] && 17.6 [13.8 - 31.9]\\
+   Percent Overweight \scriptsize{(\textit{Mean [range]})} & 94.0 [70.1 - 168.8] && 97.9 [74.4 - 131.1] && 91.3 [70.1 - 143.9] && 93.8 [72.7 - 168.8] \\
+  BMI \%tile \scriptsize{(\textit{Mean [range]})} & 59.9 [5 - 99] && 65.1 [13.8 - 98.0] && 54.9  [6.1 - 99.0] &&  61.2 [5 - 99]\\
+  Sex\scriptsize{(\textit{N})} &  &&   &&   && \\
+    \hspace{10pt} Girls    & 76 && 20 &&  26 && 30 \\
+    \hspace{10pt} Boys             & 73 && 20  && 29 && 24\\
+  Obesity Status\scriptsize{(\textit{N})} &  &&  &&  &&  \\
+    \hspace{10pt} Obese              & 41 && 16 && 10 && 15\\
+    \hspace{10pt} Not Obese         & 108 && 24 && 45 && 39 \\
+  Weight Class\scriptsize{(\textit{N})} &  &&   &&  && \\
+    \hspace{10pt} Obese              & 20 &&  10 && 5 && 5\\
+    \hspace{10pt} Overweight         & 21 && 6 && 5 && 10\\
+    \hspace{10pt} Healthy Weight     & 108 && 24 && 45 && 39\\
+  Ethnicity\scriptsize{(\textit{N})}&  &&  &&  && \\
+    \hspace{10pt} Hispanic/Latino    &  6 &&  2  &&  2  && 2\\
+    \hspace{10pt} Not H/L             & 120 &&  30 &&  50  && 40\\
+    \hspace{10pt} NA                  & 1 &&  1 && 0  && 0\\
+  Race\scriptsize{(\textit{N})} &  &&  &&  && \\
+    \hspace{10pt} Black/AA      & 7 && 2  && 1 && 4\\
+    \hspace{10pt} White         & 136 && 35 && 53 && 48\\
+    \hspace{10pt} Other/Mixed   & 6 && 3 && 1 && 2\\
+    \hspace{10pt} NA            & 0 && 0 && 0 && 0\\
+  SES\scriptsize{(\textit{N})}        &  &&  &&   && \\
+    \hspace{10pt} $>$\$100,000         & 49 && 10 && 22 && 17\\
+    \hspace{10pt} \$50,000-\$100,000   & 69 && 16 && 22  && 31 \\
+    \hspace{10pt} $<$\$50,000          & 28 && 12 && 10 && 6\\
+    \hspace{10pt} NA                    & 0 && 0 && 0 && 0\\
+  Maternal Education\scriptsize{(\textit{N})} &  &&  &&  && \\
+    \hspace{10pt} $>BA$                        & 50 && 13 && 17 && 20\\
+    \hspace{10pt} $BA$                         & 54 && 15 && 21 && 18\\
+    \hspace{10pt} $Associates/Technical$       & 18 && 6 && 5 && 7\\
+    \hspace{10pt} $High School$                & 15 && 3 && 6 && 6\\
+    \hspace{10pt} $<High School Diploma/GED$   & 0 && 0 && 0 && 0\\
+    \hspace{10pt} $NA$                         & 0 && 0 && 0 && 0\\
+  Paternal Education\scriptsize{(\textit{N})} &  &&   &&  && \\
+    \hspace{10pt} $>BA$                        & 57 && 9 &&  29 && 19\\
+    \hspace{10pt} $BA$                         & 38 && 11 &&  10 && 17\\
+    \hspace{10pt} $Associates/Technical$       & 15 && 5  &&  3 && 7\\
+    \hspace{10pt} $High School$                & 23 && 9 && 6  && 8\\
+    \hspace{10pt} $<High School Diploma/GED$   & 1 && 1 &&  0  && 0\\
+    \hspace{10pt} $NA$                         & 1 && 0 && 0 && 1\\
+  \hline    
+\end{tabular}
+\end{table}
+
+\FloatBarrier
+\newpage
+
+<!-- I like to include all the code for the individual participant characteristic tests just so it is easy to go back to if needed. I just hide output, etc for the document. -->
+
+<!-- Age -->
+```{r Age_ttest_sex, echo=FALSE, include=FALSE}
+#copy t-test code here > age_sex_t
+age_sex_t
+```
+
+<!-- BMI -->
+```{r BMI_ttest_sex, echo=FALSE, include=FALSE}
+BMI_sex_t
+```
+
+<!-- BMI percentile -->
+```{r BMIp_ttest_sex, echo=FALSE, include=FALSE}
+BMIp_sex_t
+```
+
+<!-- Maternal Ed -->
+```{r mED_chi_sex, echo=FALSE, include=FALSE}
+mED.sex_fisher
+```
+
+<!-- Paternal Ed -->
+```{r pED_chi_sex, echo=FALSE, include=FALSE}
+pED.sex_fisher
+```
+
+
+<!-- Race -->
+```{r race_chi_sex, echo=FALSE, include=FALSE}
+race.sex_fisher
+```
+
+<!-- Ethnicity -->
+```{r ethnicity_chi_sex, echo=FALSE, include=FALSE}
+ethnicity.sex_fisher
+```
+
+<!-- SES -->
+```{r SES_chi_sex, echo=FALSE, include=FALSE}
+income.sex_fisher
+```
+
+#Medial Temporal Lobe Volumes
+
+##Correlation Matrix
+```{r mtl_cors, echo=FALSE, results='asis'}
+kable(BFstructural_MTLrois_cormat[,1:6], digits = 3, caption = "Correlations between Hippocampus and participant characteristics; *p<=0.05", booktabs=TRUE)
+```
+\FloatBarrier
+\newpage
+
+##Path Models: Breastfeeding -> Satiety Responsiveness (mediated Hip) -> %BMI
+
+###Left Hippocampus
+
+```{r BF2SR_lHipMed_fit, echo=FALSE, results='asis'}
+kable(HippL_BF2SR_p85th_cov_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Statistics for Model: BF -> SR (L Hipp Med) -> p85th BMI", booktabs=TRUE) 
+```
+\FloatBarrier
+
+```{r BF2SR_lHipMed_PE, echo=FALSE, results='asis'}
+kable(HippL_BF2SR_p85th_cov_summary$PE[c(1:35), c(1:3, 6:9)], digits = 3, caption = "Parameters for Model: BF -> SR (L Hipp Med) -> p85th BMI", booktabs=TRUE)
+```
+\FloatBarrier
+
+\clearpage
+
+###Right Hippocampus
+
+```{r BF2SR_rHipMed_fit, echo=FALSE, results='asis'}
+kable(HippR_BF2SR_p85th_cov_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Statistics for Model: BF -> SR (R Hipp Med) -> p85th BMI", booktabs=TRUE)
+```
+\FloatBarrier
+
+```{r BF2SR_rHipMed_PE, echo=FALSE, results='asis'}
+kable(HippL_BF2SR_p85th_cov_summary$PE[c(1:35), c(1:3, 6:9)], digits = 3, caption = "Parameters for Model: BF -> SR (R Hipp Med) -> p85th BMI", booktabs=TRUE) 
+```
+
+
+\newpage
+<!-- ##Path Models: Satiety Responsiveness -> Hippocampus (mediated BF) -> %BMI -->
+
+<!-- ###Left Hippocampus -->
+
+<!-- ```{r SR2lHip_medBF_p85th_lHip_fit, echo=FALSE, results='asis'} -->
+<!-- kable(HippL_SR2H_medBF_p85th_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Statistics for Model: BF -> p85th BMI (SR Med) -> L Hipp", booktabs=TRUE)  -->
+<!-- ``` -->
+<!-- \FloatBarrier -->
+
+<!-- ```{r SR2lHip_medBF_p85th_lHip_PE, echo=FALSE, results='asis'} -->
+<!-- kable(HippL_SR2H_medBF_p85th_summary$PE, digits = 3, caption = "Parameters for Model: BF -> p85th BMI (SR Med) -> L Hipp", booktabs=TRUE)  -->
+<!-- ``` -->
+<!-- \FloatBarrier -->
+<!-- \clearpage -->
+
+<!-- ###Right Hippocampus -->
+
+<!-- ```{r SR2rHip_medBF_p85th_fit, echo=FALSE, results='asis'} -->
+<!-- kable(HippR_SR2H_medBF_p85th_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Statistics for Model: BF -> p85th BMI (SR Med) -> R Hipp", booktabs=TRUE) -->
+<!-- ``` -->
+<!-- \FloatBarrier -->
+
+<!-- ```{r SR2rHip_medBF_p85th_PE, echo=FALSE, results='asis'} -->
+<!-- kable(HippR_SR2H_medBF_p85th_summary$PE, digits = 3, caption = "Parameters for Model: BF -> p85th BMI (SR Med) -> R Hipp", booktabs=TRUE)  -->
+<!-- ``` -->
+<!-- \newpage -->
+
