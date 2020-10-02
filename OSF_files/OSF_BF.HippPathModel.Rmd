@@ -213,6 +213,9 @@ ethnicity.sex_fisher
 income.sex_fisher
 ```
 
+# Descriptive Associations
+<!-- Ryan, you will want to add the descriptive analyses here. Copy the format above for demographic tests. Just change the name so each one is diffrence (e.g., in SES the name is 'SES_chi_sex') -->
+
 # Medial Temporal Lobe Volumes
 
 ## Path Models: Breastfeeding -> Satiety Responsiveness (mediated Hip) -> %BMI

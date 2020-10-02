@@ -11,8 +11,6 @@ library(psych)
 library(lsr)
 library(childsds)
 library(reshape2)
-library(DiagrammeR)
-library(DiagrammeRsvg)
 
 
 #set working directory to location of script--not needed when called 
@@ -32,6 +30,9 @@ BFstructural_Alldata$cAge_yr = BFstructural_Alldata$cAge_mo/12
 
 #use QC data 
 BFstructural_covars = read.csv('Data/BFstructural_covars.csv')
+
+#ratings
+BFstructural_ICCratings = read.csv('Data/MRIstruct_FinalRatings_ICC.csv')
 
 ##remember to use: names(BFstructural_Alldata) to double check the variable names
 
@@ -254,6 +255,14 @@ WeightClass.BreastFed_3cat_tab = xtabs(~cBodyMass_class + BreastFed_3cat, data =
 WeightClass.BreastFed_3cat_fisher = fisher.test(matrix(c(10, 6, 24, 5, 5, 45, 5, 10, 39), nrow = 3, ncol = 3, byrow = FALSE))
 
 ##maternal education
+BFstructural_Alldata$mEducation_cat = ifelse(BFstructural_Alldata$mEducation == "TechnicalDegree" | 
+                                               BFstructural_Alldata$mEducation == "AssociatesDegree" |
+                                               BFstructural_Alldata$mEducation == "SomeCollege", "AA/Technical", 
+                                             ifelse(BFstructural_Alldata$mEducation == "SomeGraduateSchool" | 
+                                                      BFstructural_Alldata$mEducation == "MastersDegree" |
+                                                      BFstructural_Alldata$mEducation == "GradSchool" |
+                                                      BFstructural_Alldata$mEducation == "DoctoralDegree", ">BA", as.character(BFstructural_Alldata$mEducation)))
+
 mED.BreastFed_3cat_tab = xtabs(~mEducation + BreastFed_3cat, data = BFstructural_Alldata)
 mED.BreastFed_3cat_fisher = fisher.test(matrix(c(13, 15, 6, 3, 0, 0, 17, 21, 5, 6, 0, 0, 20, 18, 7, 6, 0, 0), nrow = 6, ncol = 3, byrow = FALSE))
 
@@ -262,6 +271,12 @@ pED.BreastFed_3cat_tab = xtabs(~dEducation + BreastFed_3cat, data = BFstructural
 pED.BreastFed_3cat_fisher = fisher.test(matrix(c(9, 11, 5, 9, 1, 0, 29, 10, 3, 6, 0, 0, 19, 17, 7, 8, 0, 1), nrow = 6, ncol = 3, byrow = FALSE))
 
 ##SES income
+BFstructural_ROIdat_mtl_wide$income_3cat = ifelse(BFstructural_ROIdat_mtl_wide$income == '<$20K' | 
+                                                     BFstructural_ROIdat_mtl_wide$income == '$21-35K' | 
+                                                     BFstructural_ROIdat_mtl_wide$income == '$36-50K', '<=50K',
+                                                   ifelse(BFstructural_ROIdat_mtl_wide$income == '$51-75K' | 
+                                                            BFstructural_ROIdat_mtl_wide$income == '$76-100K', '51-100K', '>100K'))
+
 income.BreastFed_3cat_tab = xtabs(~income + BreastFed_3cat, data = BFstructural_Alldata)
 income.BreastFed_3cat_fisher = fisher.test(matrix(c(10, 16, 12, 0, 22, 22, 10, 0, 17, 31, 6, 0), nrow = 4, ncol = 3, byrow = FALSE))
 
@@ -272,6 +287,16 @@ ethnicity.BreastFed_3cat_fisher = fisher.test(matrix(c(2, 30, 1, 2, 50, 0, 2, 40
 ##Race
 race.BreastFed_3cat_tab = xtabs(~cRace + BreastFed_3cat, data = BFstructural_Alldata)
 race.BreastFed_3cat_fisher = fisher.test(matrix(c(2, 35, 3, 0, 1, 53, 1, 0, 4, 48, 2, 0), nrow = 4, ncol = 3, byrow = FALSE))
+
+#####################################
+####                            
+####    CEBQ alpha  ####
+####                            
+#####################################
+BFstructural_Alldata$cebq3_numRev = ifelse(BFstructural_Alldata$cebq3_num == 5, 1,
+                                           ifelse(BFstructural_Alldata$cebq3_num == 4, 2, 3))
+
+psych::alpha(BFstructural_Alldata[c('cebq3_numRev', 'cebq17_num', 'cebq21_num', 'cebq26_num', 'cebq30_num')])
 
 #####################################
 ####                            
@@ -297,36 +322,82 @@ BFstructural_ROIdat_mtl_wide = merge(BFstructural_ROIdat_mtl_wide, BFstructural_
 names(BFstructural_ROIdat_mtl_wide)[c(28, 31)] = c('StudyID', 'LabID')
 
 BFstructural_ROIdat_mtl_wide = merge(BFstructural_ROIdat_mtl_wide, BFstructural_Alldata, by = 'StudyID')
-
 #####################################
 ####                            
 ####    Get Rating and Study info  ####
 ####                            
 #####################################
 
+#ICC
+wrap_kappa = cohen.kappa(data.frame(BFstructural_ICCratings$Wrap_Ryan, BFstructural_ICCratings$Wrap_Jane))
+clip_kappa = cohen.kappa(data.frame(BFstructural_ICCratings$Clipped_Ryan, BFstructural_ICCratings$Clipped_Jane))
+ringing_kappa = cohen.kappa(data.frame(BFstructural_ICCratings$Ringing_Ryan, BFstructural_ICCratings$Ringing_Jane))
+ghost_kappa = cohen.kappa(data.frame(BFstructural_ICCratings$Ghosting_Ryan, BFstructural_ICCratings$Ghosting_Jane))
+blur_kappa = cohen.kappa(data.frame(BFstructural_ICCratings$Blurriness_Ryan, BFstructural_ICCratings$Blurriness_Jane))
+
+wrap_ICC = ICC(data.frame(BFstructural_ICCratings$Wrap_Ryan, BFstructural_ICCratings$Wrap_Jane), missing = TRUE, lmer = TRUE)
+clip_ICC = ICC(data.frame(BFstructural_ICCratings$Clipped_Ryan, BFstructural_ICCratings$Clipped_Jane), missing = TRUE, lmer = TRUE)
+ringing_ICC = ICC(data.frame(BFstructural_ICCratings$Ringing_Ryan, BFstructural_ICCratings$Ringing_Jane), missing = TRUE, lmer = TRUE)
+ghost_ICC = ICC(data.frame(BFstructural_ICCratings$Ghosting_Ryan, BFstructural_ICCratings$Ghosting_Jane), missing = TRUE, lmer = TRUE)
+blur_ICC = ICC(data.frame(BFstructural_ICCratings$Blurriness_Ryan, BFstructural_ICCratings$Blurriness_Jane), missing = TRUE, lmer = TRUE)
+
+
 #add Study var as control
 BFstructural_ROIdat_mtl_wide$Study = gsub("_.*", "", BFstructural_ROIdat_mtl_wide$StudyID)
 
+#####################################
+####                            
+####    Set up dummy coded vars  ####
+####                            
+#####################################
+
+BFstructural_ROIdat_mtl_wide$BreastFed_3cat_dummy = ifelse(BFstructural_ROIdat_mtl_wide$BreastFed_3cat == '0-3mo', 0,
+                                                           ifelse(BFstructural_ROIdat_mtl_wide$BreastFed_3cat == '4-6mo', 1,
+                                                                  ifelse(BFstructural_ROIdat_mtl_wide$BreastFed_3cat == '>6mo', 2, 'error')))
+BFstructural_ROIdat_mtl_wide$BreastFed_3cat_dummy = as.numeric(BFstructural_ROIdat_mtl_wide$BreastFed_3cat_dummy)
+
+BFstructural_ROIdat_mtl_wide$mEducation_dummy = ifelse(BFstructural_ROIdat_mtl_wide$mEducation == 'HighSchool' |
+                                                         BFstructural_ROIdat_mtl_wide$mEducation == 'SomeCollege', 0,
+                                                       ifelse(BFstructural_ROIdat_mtl_wide$mEducation == 'TechnicalDegree' | 
+                                                                BFstructural_ROIdat_mtl_wide$mEducation == 'AssociatesDegree', 1,
+                                                              ifelse(BFstructural_ROIdat_mtl_wide$mEducation == 'BachelorDegree', 2, 3)))
+
+BFstructural_ROIdat_mtl_wide$income_dummy = ifelse(BFstructural_ROIdat_mtl_wide$income == '<$20K' | 
+                                                     BFstructural_ROIdat_mtl_wide$income == '$21-35K' | 
+                                                     BFstructural_ROIdat_mtl_wide$income == '$36-50K', 0,
+                                                   ifelse(BFstructural_ROIdat_mtl_wide$income == '$51-75K' | 
+                                                            BFstructural_ROIdat_mtl_wide$income == '$76-100K', 1, 2))
+
+BFstructural_ROIdat_mtl_wide$cPreMat_dummy = ifelse(BFstructural_ROIdat_mtl_wide$cPreMat == 'No', 0, 1)
+
+BFstructural_ROIdat_mtl_wide$Study_dummy = ifelse(BFstructural_ROIdat_mtl_wide$Study == 'FBS', 0,
+                                                  ifelse(BFstructural_ROIdat_mtl_wide$Study == 'DMK', 1,
+                                                         ifelse(BFstructural_ROIdat_mtl_wide$Study == 'TestRetest', 2,
+                                                                ifelse(BFstructural_ROIdat_mtl_wide$Study == 'cceb', 3, 4))))
+
+write.csv(BFstructural_ROIdat_mtl_wide, 'OSF_files/Data/BFstructural_Data.csv', row.names = FALSE)
+
 #1 removed for QC rating >=4
 BFstructural_ROIdat_mtl_wide = BFstructural_ROIdat_mtl_wide[BFstructural_ROIdat_mtl_wide$AverageRating < 4, ]
+
+
+
 
 #####################################
 ####                            
 ####     All - Correlation with Volumes  ####
 ####                            
 #####################################
-BFstructural_ROIdat_BFcont_mtl_wide = BFstructural_ROIdat_mtl_wide[BFstructural_ROIdat_mtl_wide$BreastFed_monthsNumeric == 'Y', ]
-
-BFstructural_MTLrois_corvars = BFstructural_ROIdat_BFcont_mtl_wide[c(101, 104, 92, 32, 29:30, 3:8)]
-BFstructural_MTLrois_cornames = names(BFstructural_ROIdat_BFcont_mtl_wide)[c(101, 104, 92, 32, 29:30, 3:8)]
+BFstructural_MTLrois_corvars = BFstructural_ROIdat_BFcont_mtl_wide[c(139, 136, 92, 32, 29:30, 3:8)]
+BFstructural_MTLrois_cornames = names(BFstructural_ROIdat_BFcont_mtl_wide)[c(139, 136, 92, 32, 29:30, 3:8)]
 BFstructural_MTLrois_cormat = cor.matrix(BFstructural_MTLrois_corvars, BFstructural_MTLrois_cornames)
 
-BFstructural_ROIdat_subregionsGM_corvars = BFstructural_ROIdat_BFcont_mtl_wide[c(101, 104, 92, 32, 29:30, 4, 7, 9:18)]
-BFstructural_ROIdat_subregionsGM_cornames = names(BFstructural_ROIdat_BFcont_mtl_wide)[c(101, 104, 92, 32, 29:30, 4, 7, 9:18)]
+BFstructural_ROIdat_subregionsGM_corvars = BFstructural_ROIdat_BFcont_mtl_wide[c(139, 136, 92, 32, 29:30, 4, 7, 9:18)]
+BFstructural_ROIdat_subregionsGM_cornames = names(BFstructural_ROIdat_BFcont_mtl_wide)[c(139, 136, 92, 32, 29:30,4, 7, 9:18)]
 BFstructural_ROIdat_subregionsGM_cormat = cor.matrix(BFstructural_ROIdat_subregionsGM_corvars, BFstructural_ROIdat_subregionsGM_cornames)
 
 BFstructural_ROIdat_subregionsWM_corvars = BFstructural_ROIdat_BFcont_mtl_wide[c(101, 104, 92, 32, 29:30, 4, 7, 19:28)]
-BFstructural_ROIdat_subregionsWM_cornames = names(BFstructural_ROIdat_BFcont_mtl_wide)[c(101, 104, 92, 32, 29:30, 4, 7, 19:28)]
+BFstructural_ROIdat_subregionsWM_cornames = names(BFstructural_ROIdat_BFcont_mtl_wide)[c(139, 136, 92, 32, 29:30, 4, 7, 19:28)]
 BFstructural_ROIdat_subregionsWM_cormat = cor.matrix(BFstructural_ROIdat_subregionsWM_corvars, BFstructural_ROIdat_subregionsWM_cornames)
 
 ##Breastfeeding ANOVA
@@ -341,129 +412,29 @@ BMIp_BreastFed_3cat_range = range.function.na(BFstructural_Alldata, BFstructural
 ####     BF -> SR, Hip Med } -> cdc_p85th  ####
 ####                            
 #####################################
-BFstructural_ROIdat_mtl_wide$BreastFed_3cat_dummy = ifelse(BFstructural_ROIdat_mtl_wide$BreastFed_3cat == '0-3mo', 0,
-                                                           ifelse(BFstructural_ROIdat_mtl_wide$BreastFed_3cat == '4-6mo', 1,
-                                                                  ifelse(BFstructural_ROIdat_mtl_wide$BreastFed_3cat == '>6mo', 2, 'error')))
-BFstructural_ROIdat_mtl_wide$BreastFed_3cat_dummy = as.numeric(BFstructural_ROIdat_mtl_wide$BreastFed_3cat_dummy)
-
-BFstructural_ROIdat_mtl_wide$mEducation_dummy = ifelse(BFstructural_ROIdat_mtl_wide$mEducation == 'HighSchool' |
-                                                         BFstructural_ROIdat_mtl_wide$mEducation == 'SomeCollege', 0,
-                                                       ifelse(BFstructural_ROIdat_mtl_wide$mEducation == 'TechnicalDegree' | 
-                                                                       BFstructural_ROIdat_mtl_wide$mEducation == 'AssociatesDegree', 1,
-                                                                     ifelse(BFstructural_ROIdat_mtl_wide$mEducation == 'BachelorDegree', 2, 3)))
-
-BFstructural_ROIdat_mtl_wide$income_dummy = ifelse(BFstructural_ROIdat_mtl_wide$income == '<$20K' | 
-                                                     BFstructural_ROIdat_mtl_wide$income == '$21-35K' | 
-                                                     BFstructural_ROIdat_mtl_wide$income == '$36-50K', 0,
-                                                   ifelse(BFstructural_ROIdat_mtl_wide$income == '$51-75K' | 
-                                                            BFstructural_ROIdat_mtl_wide$income == '$76-100K', 1, 2))
-
-BFstructural_ROIdat_mtl_wide$cPreMat_dummy = ifelse(BFstructural_ROIdat_mtl_wide$cPreMat == 'No', 0, 1)
-
-BFstructural_ROIdat_mtl_wide$Study_dummy = ifelse(BFstructural_ROIdat_mtl_wide$Study == 'Brand', 0,
-  ifelse(BFstructural_ROIdat_mtl_wide$Study == 'cceb', 1,
-    ifelse(BFstructural_ROIdat_mtl_wide$Study == 'DMK', 2,
-      ifelse(BFstructural_ROIdat_mtl_wide$Study == 'FBS', 3, 4))))
-
-BFstructural_ROIdat_mtl_wide$Study_Branddummy = ifelse(BFstructural_ROIdat_mtl_wide$Study == 'Brand', 1, 0)
-BFstructural_ROIdat_mtl_wide$Study_ccebdummy = ifelse(BFstructural_ROIdat_mtl_wide$Study == 'cceb', 1, 0)
-BFstructural_ROIdat_mtl_wide$Study_DMKdummy = ifelse(BFstructural_ROIdat_mtl_wide$Study == 'DMK', 1, 0)
-BFstructural_ROIdat_mtl_wide$Study_FBSdummy = ifelse(BFstructural_ROIdat_mtl_wide$Study == 'FBS', 1, 0)
-BFstructural_ROIdat_mtl_wide$Study_TRTdummy = ifelse(BFstructural_ROIdat_mtl_wide$Study == 'TestRetest', 1, 0)
-
-## Left Hippocampus
-HippL_BF2SR_p85th_pathmod <-'
-# c path
-cebq_SR ~ c*BreastFed_3cat_dummy
-
-# b1/a2 path
-cebq_SR ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + b1a2*lHip_21
-
-# a1 path
-lHip_21 ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex +  a1*BreastFed_3cat_dummy
-
-# b2 prime model
-cdc_p85th ~ b2*cebq_SR
-
-# c2 model
-cdc_p85th ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + c2*lHip_21
-
-#indirect effects
-lHipMed_BF2SR := a1*b1a2
-SRMed_lHip2p85th := b1a2*b2
-
-#total effect
-lHip_BF2SR_total := c + lHipMed_BF2SR
-SR_lHip2p85th_total := c2 + SRMed_lHip2p85th
-
-#proportion med
-lHip_propmed := lHipMed_BF2SR/lHip_BF2SR_total
-SR_propmed := SRMed_lHip2p85th/SR_lHip2p85th_total
-'
-
-# fit the model
-HippL_BF2SR_p85th_fit <- sem(HippL_BF2SR_p85th_pathmod, data = BFstructural_ROIdat_mtl_wide, estimator = "ML")
-HippL_BF2SR_p85th_summary <- summary(HippL_BF2SR_p85th_fit, fit.measures = T, rsquare=TRUE, standardized=TRUE)
-HippL_BF2SR_p85th_std = standardizedSolution(HippL_BF2SR_p85th_fit, type = 'std.all', output = 'pretty')
-
-HippL_BF2SR_p85th_plot = lavaanPlot(model = HippL_BF2SR_p85th_fit, node_options = list(shape = "box", fontname = "Times"), edge_options = list(color = "grey"), coefs = TRUE, covs = TRUE, stand = TRUE, stars = "regress")
-
-## Right Hippocampus
-HippR_BF2SR_p85th_pathmod <-'
-# c path
-cebq_SR ~ c*BreastFed_3cat_dummy
-
-# b1/a2 path
-cebq_SR ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + b1a2*rHip_22
-
-# a1 path
-rHip_22 ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + a1*BreastFed_3cat_dummy
-
-# b2 prime model
-cdc_p85th ~ b2*cebq_SR
-
-# c2 model
-cdc_p85th ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + c2*rHip_22
-
-#indirect effects
-lHipMed_BF2SR := a1*b1a2
-SRMed_lHip2p85th := b1a2*b2
-
-#total effect
-lHip_BF2SR_total := c + lHipMed_BF2SR
-SR_lHip2p85th_total := c2 + SRMed_lHip2p85th
-
-#proportion med
-lHip_propmed := lHipMed_BF2SR/lHip_BF2SR_total
-SR_propmed := SRMed_lHip2p85th/SR_lHip2p85th_total
-'
-
-# fit the model
-HippR_BF2SR_p85th_fit <- sem(HippR_BF2SR_p85th_pathmod, data = BFstructural_ROIdat_mtl_wide, estimator = "ML")
-HippR_BF2SR_p85th_summary <- summary(HippR_BF2SR_p85th_fit, fit.measures = T, rsquare=TRUE, standardized=TRUE)
-HippR_BF2SR_p85th_std = standardizedSolution(HippR_BF2SR_p85th_fit, type = 'std.all', output = 'pretty')
-HippR_BF2SR_p85th_plot = lavaanPlot(model = HippR_BF2SR_p85th_fit, node_options = list(shape = "box", fontname = "Times"), edge_options = list(color = "grey"), coefs = TRUE, covs = TRUE, stand = TRUE, stars = "regress")
 
 ## Left  with extra covariates
 HippL_BF2SR_p85th_cov_pathmod <-'
 # c path
-cebq_SR ~ mEducation_dummy + income_dummy + c*BreastFed_3cat_dummy
+cebq_SR ~ mEducation_dummy + income_dummy + cPreMat_dummy + c*BreastFed_3cat_dummy
 
 # b1/a2 path
-cebq_SR ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + b1a2*lHip_21
+cebq_SR ~ TIV + IQR + Study_dummy + cAge_yr + sex + b1a2*lHip_21
 
 # a1 path
-lHip_21 ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + mEducation_dummy + income_dummy + a1*BreastFed_3cat_dummy
-
-# b2 prime model
-cdc_p85th ~  mEducation_dummy + income_dummy + b2*cebq_SR
+lHip_21 ~ TIV + IQR + Study_dummy + cAge_yr + sex + income_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy
 
 # c2 model
-cdc_p85th ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + c2*lHip_21
+cdc_p85th ~ TIV + IQR + Study_dummy + cAge_yr + sex + c2*lHip_21
+
+# b2 prime model
+cdc_p85th ~  mEducation_dummy + income_dummy + cPreMat_dummy + b2*cebq_SR
+
 
 #indirect effects
 lHipMed_BF2SR := a1*b1a2
 SRMed_lHip2p85th := b1a2*b2
+
 
 #total effect
 lHip_BF2SR_total := c + lHipMed_BF2SR
@@ -481,26 +452,46 @@ HippL_BF2SR_p85th_cov_std = standardizedSolution(HippL_BF2SR_p85th_cov_fit, type
 
 HippL_BF2SR_p85th_cov_plot = lavaanPlot(model = HippL_BF2SR_p85th_cov_fit, node_options = list(shape = "box", fontname = "Times"), edge_options = list(color = "grey"), coefs = TRUE, covs = TRUE, stand = TRUE, stars = "regress")
 
+# post-hoc for breastfeeding
+##Breastfeeding groups t-tests
+ttest_0t3mo_g6mo = t.test(lHip_21~BreastFed_3cat, data = BFstructural_ROIdat_mtl_wide[BFstructural_ROIdat_mtl_wide$BreastFed_3cat != '>6mo', ])
+ttest_4t6mo_g6mo = t.test(lHip_21~BreastFed_3cat, data = BFstructural_ROIdat_mtl_wide[BFstructural_ROIdat_mtl_wide$BreastFed_3cat != '0-3mo', ])
+ttest_0t3mo_g6mo = t.test(lHip_21~BreastFed_3cat, data = BFstructural_ROIdat_mtl_wide[BFstructural_ROIdat_mtl_wide$BreastFed_3cat != '4-6mo', ])
+
+##standard deviation to report with measns
+LHipp_BreastFeedingCat_sd = means.function(BFstructural_ROIdat_mtl_wide, BFstructural_ROIdat_mtl_wide$lHip_21, BFstructural_ROIdat_mtl_wide$BreastFed_3cat)
+
+# post-hoc for income and SR
+##Income groups t-tests
+
+#copy from breastfeeding post-hoc and change variablenames/categories 
+
+# post-hoc for m education and cdc_p85th
+
+#copy from breastfeeding post-hoc and change variablenames/categories 
+
 ## Right  with extra covariates
 HippR_BF2SR_p85th_cov_pathmod <-'
 # c path
-cebq_SR ~ mEducation_dummy + income_dummy + c*BreastFed_3cat_dummy
+cebq_SR ~ mEducation_dummy + income_dummy + cPreMat_dummy + c*BreastFed_3cat_dummy
 
 # b1/a2 path
-cebq_SR ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + b1a2*rHip_22
+cebq_SR ~ TIV + IQR + Study_dummy + cAge_yr + sex + b1a2*rHip_22
 
 # a1 path
-rHip_22 ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + a1*BreastFed_3cat_dummy
-
-# b2 prime model
-cdc_p85th ~ mEducation_dummy + income_dummy + b2*cebq_SR
+rHip_22 ~ TIV + IQR + Study_dummy + cAge_yr + sex + income_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy
 
 # c2 model
-cdc_p85th ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + c2*rHip_22
+cdc_p85th ~ TIV + IQR + Study_dummy + cAge_yr + sex + c2*rHip_22
+
+# b2 prime model
+cdc_p85th ~  mEducation_dummy + income_dummy + cPreMat_dummy + b2*cebq_SR
+
 
 #indirect effects
 rHipMed_BF2SR := a1*b1a2
 SRMed_rHip2p85th := b1a2*b2
+
 
 #total effect
 rHip_BF2SR_total := c + rHipMed_BF2SR
@@ -508,168 +499,102 @@ SR_rHip2p85th_total := c2 + SRMed_rHip2p85th
 
 #proportion med
 rHip_propmed := rHipMed_BF2SR/rHip_BF2SR_total
-SR_propmed := SRMed_rHip2p85th/SR_rHip2p85th_total
-'
+SR_propmed := SRMed_rHip2p85th/SR_rHip2p85th_total'
 
 # fit the model
 HippR_BF2SR_p85th_cov_fit <- sem(HippR_BF2SR_p85th_cov_pathmod, data = BFstructural_ROIdat_mtl_wide, estimator = "ML")
-HippR_BF2SR_p85th_cov_summary <- summary(HippR_BF2SR_p85th_fit, fit.measures = T, rsquare=TRUE)
+HippR_BF2SR_p85th_cov_summary <- summary(HippR_BF2SR_p85th_cov_fit, fit.measures = T, rsquare=TRUE)
 HippR_BF2SR_p85th_cov_std = standardizedSolution(HippR_BF2SR_p85th_cov_fit, type = 'std.all', output = 'pretty')
-HippR_BF2SR_p85th_plot = lavaanPlot(model = HippR_BF2SR_p85th_fit, node_options = list(shape = "box", fontname = "Times"), edge_options = list(color = "grey"), coefs = TRUE, covs = TRUE, stand = TRUE, stars = "regress")
+HippR_BF2SR_p85th_plot = lavaanPlot(model = HippR_BF2SR_p85th_cov_fit, node_options = list(shape = "box", fontname = "Times"), edge_options = list(color = "grey"), coefs = TRUE, covs = TRUE, stand = TRUE, stars = "regress")
 
 
-#####################################
-####                            
-####     All Data Path Models Mediation    ####
-####     SR -> Hip, BF Med } -> cdc_p85th  ####
-####                            
-#####################################
+# post-hoc for breastfeeding
+##Breastfeeding groups t-tests
+ttest_0t3mo_g6mo = t.test(lHip_21~BreastFed_3cat, data = BFstructural_ROIdat_mtl_wide[BFstructural_ROIdat_mtl_wide$BreastFed_3cat != '>6mo', ])
+ttest_4t6mo_g6mo = t.test(lHip_21~BreastFed_3cat, data = BFstructural_ROIdat_mtl_wide[BFstructural_ROIdat_mtl_wide$BreastFed_3cat != '0-3mo', ])
+ttest_0t3mo_g6mo = t.test(lHip_21~BreastFed_3cat, data = BFstructural_ROIdat_mtl_wide[BFstructural_ROIdat_mtl_wide$BreastFed_3cat != '4-6mo', ])
 
-## Left Hippocampus
-HippL_SR2H_medBF_p85th_pathmod <-'
-# c path
-lHip_21 ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + c*cebq_SR
-
-# b1/a2 path
-lHip_21 ~ b1a2*BreastFed_3cat_dummy
-
-# a1 path
-BreastFed_3cat_dummy ~ cAge_yr + sex + a1*cebq_SR
-
-# b2 prime model
-cdc_p85th ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex +  b2*lHip_21
-
-# c2 model
-cdc_p85th ~ c2*BreastFed_3cat_dummy
-
-#indirect effects
-BFMed_SR2lHip := a1*b1a2
-lHipMed_BF2p85th := b1a2*b2
-
-#total effect
-BFMed_SR2lHip_total := c + BFMed_SR2lHip
-lHipMed_BF2p85th_total := c2 + lHipMed_BF2p85th
-
-#proportion med
-BF_propmed := BFMed_SR2lHip/BFMed_SR2lHip_total
-lHip_propmed := lHipMed_BF2p85th/lHipMed_BF2p85th_total
-'
-
-# fit the model
-HippL_SR2H_medBF_p85th_fit <- sem(HippL_SR2H_medBF_p85th_pathmod, data = BFstructural_ROIdat_mtl_wide, estimator = "ML")
-HippL_SR2H_medBF_p85th_summary <- summary(HippL_SR2H_medBF_p85th_fit, fit.measures = T, rsquare=TRUE)
-HippL_SR2H_medBF_p85th_std = standardizedSolution(HippL_SR2H_medBF_p85th_fit, type = 'std.all', output = 'pretty')
-HippL_SR2H_medBF_p85th_plot = lavaanPlot(model = HippL_SR2H_medBF_p85th_fit, node_options = list(shape = "box", fontname = "Times"), edge_options = list(color = "grey"), coefs = TRUE, covs = TRUE, stand = FALSE, stars = "regress")
-
-## Right Hippocampus
-HippR_SR2H_medBF_p85th_pathmod <-'
-# c path
-rHip_22 ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + c*cebq_SR
-
-# b1/a2 path
-rHip_22 ~ b1a2*BreastFed_3cat_dummy
-
-# a1 path
-BreastFed_3cat_dummy ~ cAge_yr + sex + a1*cebq_SR
-
-# b2 prime model
-cdc_p85th ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex +  b2*rHip_22
-
-# c2 model
-cdc_p85th ~ c2*BreastFed_3cat_dummy
-
-#indirect effects
-BFMed_SR2rHip := a1*b1a2
-rHipMed_BF2p85th := b1a2*b2
-
-#total effect
-BFMed_SR2rHip_total := c + BFMed_SR2rHip
-rHipMed_BF2p85th_total := c2 + rHipMed_BF2p85th
-
-#proportion med
-BF_propmed := BFMed_SR2rHip/BFMed_SR2rHip_total
-rHip_propmed := rHipMed_BF2p85th/rHipMed_BF2p85th_total
-'
-
-# fit the model
-HippR_SR2H_medBF_p85th_fit <- sem(HippR_SR2H_medBF_p85th_pathmod, data = BFstructural_ROIdat_mtl_wide, estimator = "ML")
-HippR_SR2H_medBF_p85th_summary <- summary(HippR_SR2H_medBF_p85th_fit, fit.measures = T, rsquare=TRUE)
-HippR_SR2H_medBF_p85th_std = standardizedSolution(HippR_SR2H_medBF_p85th_fit, type = 'std.all', output = 'pretty')
-HippR_SR2H_medBF_p85th_plot = lavaanPlot(model = HippR_SR2H_medBF_p85th_fit, node_options = list(shape = "box", fontname = "Times"), edge_options = list(color = "grey"), coefs = TRUE, covs = TRUE, stand = TRUE, stars = "regress")
-
-## Left Hippocampus with extra covariates
-HippL_SR2H_medBF_p85th_cov_pathmod <-'
-# c path
-lHip_21 ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + c*cebq_SR
-
-# b1/a2 path
-lHip_21 ~ b1a2*BreastFed_3cat_dummy
-
-# a1 path
-BreastFed_3cat_dummy ~ cAge_yr + sex + mEducation_dummy + income_dummy + a1*cebq_SR
-
-# b2 prime model
-cdc_p85th ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex +  b2*lHip_21
-
-# c2 model
-cdc_p85th ~ mEducation_dummy + income_dummy + c2*BreastFed_3cat_dummy
-
-#indirect effects
-BFMed_SR2lHip := a1*b1a2
-lHipMed_BF2p85th := b1a2*b2
-
-#total effect
-BFMed_SR2lHip_total := c + BFMed_SR2lHip
-lHipMed_BF2p85th_total := c2 + lHipMed_BF2p85th
-
-#proportion med
-BF_propmed := BFMed_SR2lHip/BFMed_SR2lHip_total
-lHip_propmed := lHipMed_BF2p85th/lHipMed_BF2p85th_total
-'
-
-# fit the model
-HippL_SR2H_medBF_p85th_cov_fit <- sem(HippL_SR2H_medBF_p85th_cov_pathmod, data = BFstructural_ROIdat_mtl_wide, estimator = "ML")
-HippL_SR2H_medBF_p85th_cov_summary <- summary(HippL_SR2H_medBF_p85th_cov_fit, fit.measures = T, rsquare=TRUE)
-HippL_SR2H_medBF_p85th_cov_std = standardizedSolution(HippL_SR2H_medBF_p85th_cov_fit, type = 'std.all', output = 'pretty')
-HippL_SR2H_medBF_p85th_cov_plot = lavaanPlot(model = HippL_SR2H_medBF_p85th_cov_fit, node_options = list(shape = "box", fontname = "Times"), edge_options = list(color = "grey"), coefs = TRUE, covs = TRUE, stand = TRUE, stars = "regress")
-
-## Right Hippocampus with extra covariates
-HippR_SR2H_medBF_p85th_cov_pathmod <-'
-# c path
-rHip_22 ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex + c*cebq_SR
-
-# b1/a2 path
-rHip_22 ~ b1a2*BreastFed_3cat_dummy
-
-# a1 path
-BreastFed_3cat_dummy ~ cAge_yr + sex + mEducation_dummy + income_dummy + a1*cebq_SR
-
-# b2 prime model
-cdc_p85th ~ TIV + IQR + Study_Branddummy + Study_ccebdummy + Study_DMKdummy + Study_FBSdummy + cAge_yr + sex +  b2*rHip_22
-
-# c2 model
-cdc_p85th ~ mEducation_dummy + income_dummy + c2*BreastFed_3cat_dummy
-
-#indirect effects
-BFMed_SR2rHip := a1*b1a2
-rHipMed_BF2p85th := b1a2*b2
-
-#total effect
-BFMed_SR2rHip_total := c + BFMed_SR2rHip
-rHipMed_BF2p85th_total := c2 + rHipMed_BF2p85th
-
-#proportion med
-BF_propmed := BFMed_SR2rHip/BFMed_SR2rHip_total
-rHip_propmed := rHipMed_BF2p85th/rHipMed_BF2p85th_total
-'
-
-# fit the model
-HippR_SR2H_medBF_p85th_cov_fit <- sem(HippR_SR2H_medBF_p85th_cov_pathmod, data = BFstructural_ROIdat_mtl_wide, estimator = "ML")
-HippR_SR2H_medBF_p85th_cov_summary <- summary(HippR_SR2H_medBF_p85th_cov_fit, fit.measures = T, rsquare=TRUE)
-HippR_SR2H_medBF_p85th_cov_std = standardizedSolution(HippR_SR2H_medBF_p85th_cov_fit, type = 'std.all', output = 'pretty')
-HippR_SR2H_medBF_p85th_cov_plot = lavaanPlot(model = HippR_SR2H_medBF_p85th_cov_fit, node_options = list(shape = "box", fontname = "Times"), edge_options = list(color = "grey"), coefs = TRUE, covs = TRUE, stand = TRUE, stars = "regress")
+##standard deviation to report with measns
+LHipp_BreastFeedingCat_sd = means.function(BFstructural_ROIdat_mtl_wide, BFstructural_ROIdat_mtl_wide$lHip_21, BFstructural_ROIdat_mtl_wide$BreastFed_3cat)
 
 
 
-
+# #####################################
+# ####                            
+# ####     All Data Path Models Mediation    ####
+# ####     SR -> Hip, BF Med } -> cdc_p85th  ####
+# ####                            
+# #####################################
+# 
+# ## Left Hippocampus
+# HippL_SR2H_medBF_p85th_pathmod <-'
+# # c path
+# lHip_21 ~ TIV + IQR + Study_dummy + cAge_yr + sex + mEducation_dummy + income_dummy + cPreMat_dummy + c*cebq_SR
+# 
+# # b1/a2 path
+# lHip_21 ~ b1a2*BreastFed_3cat_dummy
+# 
+# # a1 path
+# BreastFed_3cat_dummy ~ mEducation_dummy + income_dummy + cPreMat_dummy + a1*cebq_SR
+# 
+# # b2 prime model
+# cdc_p85th ~ TIV + IQR + Study_dummy + cAge_yr + sex +  b2*lHip_21
+# 
+# # c2 model
+# cdc_p85th ~ mEducation_dummy + income_dummy + cPreMat_dummy + c2*BreastFed_3cat_dummy
+# 
+# #indirect effects
+# BFMed_SR2lHip := a1*b1a2
+# lHipMed_BF2p85th := b1a2*b2
+# 
+# #total effect
+# BFMed_SR2lHip_total := c + BFMed_SR2lHip
+# lHipMed_BF2p85th_total := c2 + lHipMed_BF2p85th
+# 
+# #proportion med
+# BF_propmed := BFMed_SR2lHip/BFMed_SR2lHip_total
+# lHip_propmed := lHipMed_BF2p85th/lHipMed_BF2p85th_total
+# '
+# 
+# # fit the model
+# HippL_SR2H_medBF_p85th_fit <- sem(HippL_SR2H_medBF_p85th_pathmod, data = BFstructural_ROIdat_mtl_wide, estimator = "ML")
+# HippL_SR2H_medBF_p85th_summary <- summary(HippL_SR2H_medBF_p85th_fit, fit.measures = T, rsquare=TRUE)
+# HippL_SR2H_medBF_p85th_std = standardizedSolution(HippL_SR2H_medBF_p85th_fit, type = 'std.all', output = 'pretty')
+# HippL_SR2H_medBF_p85th_plot = lavaanPlot(model = HippL_SR2H_medBF_p85th_fit, node_options = list(shape = "box", fontname = "Times"), edge_options = list(color = "grey"), coefs = TRUE, covs = TRUE, stand = FALSE, stars = "regress")
+# 
+# ## Right Hippocampus
+# HippR_SR2H_medBF_p85th_pathmod <-'
+# # c path
+# rHip_22 ~ TIV + IQR + Study_dummy + cAge_yr + sex + mEducation_dummy + income_dummy + cPreMat_dummy + c*cebq_SR
+# 
+# # b1/a2 path
+# rHip_22 ~ b1a2*BreastFed_3cat_dummy
+# 
+# # a1 path
+# BreastFed_3cat_dummy ~ mEducation_dummy + income_dummy + cPreMat_dummy + a1*cebq_SR
+# 
+# # b2 prime model
+# cdc_p85th ~ TIV + IQR + Study_dummy + cAge_yr + sex +  b2*rHip_22
+# 
+# # c2 model
+# cdc_p85th ~ mEducation_dummy + income_dummy + cPreMat_dummy + c2*BreastFed_3cat_dummy
+# 
+# #indirect effects
+# BFMed_SR2rHip := a1*b1a2
+# rHipMed_BF2p85th := b1a2*b2
+# 
+# #total effect
+# BFMed_SR2rHip_total := c + BFMed_SR2rHip
+# rHipMed_BF2p85th_total := c2 + rHipMed_BF2p85th
+# 
+# #proportion med
+# BF_propmed := BFMed_SR2rHip/BFMed_SR2rHip_total
+# rHip_propmed := rHipMed_BF2p85th/rHipMed_BF2p85th_total
+# '
+# 
+# # fit the model
+# HippR_SR2H_medBF_p85th_fit <- sem(HippR_SR2H_medBF_p85th_pathmod, data = BFstructural_ROIdat_mtl_wide, estimator = "ML")
+# HippR_SR2H_medBF_p85th_summary <- summary(HippR_SR2H_medBF_p85th_fit, fit.measures = T, rsquare=TRUE)
+# HippR_SR2H_medBF_p85th_std = standardizedSolution(HippR_SR2H_medBF_p85th_fit, type = 'std.all', output = 'pretty')
+# HippR_SR2H_medBF_p85th_plot = lavaanPlot(model = HippR_SR2H_medBF_p85th_fit, node_options = list(shape = "box", fontname = "Times"), edge_options = list(color = "grey"), coefs = TRUE, covs = TRUE, stand = TRUE, stars = "regress")
 

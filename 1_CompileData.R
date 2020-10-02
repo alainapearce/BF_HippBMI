@@ -13,7 +13,7 @@ source('functions.R')
 
 ##load datasets
 all_dat = read.csv('Data/All_data.csv', header = TRUE, na.strings = c("NA", "", "<NA>", "#NULL!", " "))
-BF_dat = all_dat[!is.na(all_dat$BreastFed_wk), c(1:58, 129:138)]
+BF_dat = all_dat[!is.na(all_dat$BreastFed_wk), c(1:58, 129:138, 94:128)]
 BF_dat$LabID = factor(BF_dat$LabID)
 BF_dat$StudyID = factor(BF_dat$StudyID)
 BF_dat$Keep = 'N'
@@ -194,3 +194,4 @@ write.csv(TPMall_QC[TPMall_QC$Keep == 'Y', c('LabID', 'parID')], 'Data/BFstructu
 write.csv(BFstructural_covars, 'Data/BFstructural_covars.csv', row.names = F)
 write.csv(BF_dat[BF_dat$Keep == 'Y', ], 'Data/BFstructural_Alldata.csv', row.names = FALSE)
 write.csv(Ratings_dat[Ratings_dat$Keep == 'Y', ], 'Data/BFstructural_MRIstruct_FinalRatings_ICC.csv', row.names = FALSE)
+
