@@ -13,7 +13,7 @@ source('functions.R')
 
 ##load datasets
 all_dat = read.csv('Data/All_data.csv', header = TRUE, na.strings = c("NA", "", "<NA>", "#NULL!", " "))
-BF_dat = all_dat[!is.na(all_dat$BreastFed_wk), c(1:58, 129:138, 94:128)]
+BF_dat = all_dat[!is.na(all_dat$BreastFed_wk), c(1:16, 22:28, 38:40, 129:138, 94:128)]
 BF_dat$LabID = factor(BF_dat$LabID)
 BF_dat$StudyID = factor(BF_dat$StudyID)
 BF_dat$Keep = 'N'
