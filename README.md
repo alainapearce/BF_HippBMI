@@ -3,9 +3,6 @@ The projected used structural MRI data compiled across 5 studies to examine the 
 
 ## Directory Structure and Files
 
-### 1_CompileData.R: 
-This is an R script to select the individual participants and choose the visit with the best quality MRI scan if the participant was part of more than 1 study. The subset data used in this project is fully available in both the Data directory and the docker image. We are currently working to make the larger database fully available with a persistant DOI.
-
 ### BFstructural_docker_results.pdf 
 This is a .pdf generated fromt eh BFstructural_docker_results.Rmd via the BFstructural_dockerImage.tar.gz docker image.
 
