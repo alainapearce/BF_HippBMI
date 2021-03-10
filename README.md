@@ -25,14 +25,14 @@ This is an R script that contains all the analysis and setup code
 This is a R markdown document that will generate a .pdf of the results. 
 Note: if running this file outside the docker image, exact replication of results is not garenteed. If project is first loaded, then package versions will match due to the use of the package renv (will load project specific version of R packages listed in renv.lock). However, this will not resolve opperating system dependent discrepencies.
 
-### DockerImage
-dockerfile is the file used to build the docker image.
+### Docker Image
+The docker image is hosted on Zenodo to download directly.
 
-BFstructural_dockerImage.tar.gz is the docker image for this project and should replicate reported results. To use image, download to your system and use the terminal to execute the following steps:
+bf_structural-AJCNsubmission.tar is the docker image for this project and should replicate reported results. To use image, download to your system and use the terminal to execute the following steps:
 
 1) Load docker image: 
-        docker load BFstructural_dockerImage.tar.gz
+        docker load bf_structural-AJCNsubmission.tar
 
 2) Run docker image: 
-        docker run -v "$(pwd):/project/output" dockerfile
+        docker run -v "$(pwd):/project/output" bf_structural-AJCNsubmission
         Note: if on windows machine, you will need to use different syntax for $(pwd) part of the command
