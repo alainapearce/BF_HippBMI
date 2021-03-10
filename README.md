@@ -1,13 +1,16 @@
 # BF_HippBMI
 The projected used structural MRI data compiled across 5 studies to examine the impact of exclusive breastfeeding duration on satiety responsiveness, hippocampal grey matter density, and BMI in 7-11 year old children.
 
-## OSF Directory Structure and Files
+## Directory Structure and Files
 
-### 1_CompileData.R: this is an R script to select the individual participants and choose the visit with the best quality MRI scan if the participant was part of more than 1 study. The subset data used in this project is fully available in both the Data directory and the docker image. We are currently working to make the larger database fully available with a persistant DOI.
+### 1_CompileData.R: 
+This is an R script to select the individual participants and choose the visit with the best quality MRI scan if the participant was part of more than 1 study. The subset data used in this project is fully available in both the Data directory and the docker image. We are currently working to make the larger database fully available with a persistant DOI.
 
-### BFstructural_docker_results.pdf: this is a .pdf generated fromt eh BFstructural_docker_results.Rmd via the BFstructural_dockerImage.tar.gz docker image.
+### BFstructural_docker_results.pdf 
+This is a .pdf generated fromt eh BFstructural_docker_results.Rmd via the BFstructural_dockerImage.tar.gz docker image.
 
-### BFstructural_docker_results.Rmd is a R markdown document that will generate a .pdf of the results. 
+### BFstructural_docker_results.Rmd 
+This is a R markdown document that will generate a .pdf of the results. 
 Note: if running this file outside the docker image, exact replication of results is not garenteed. If project is first loaded, then package versions will match due to the use of the package renv (will load project specific version of R packages listed in renv.lock). However, this will not resolve opperating system dependent discrepencies.
 
 ### Data
