@@ -151,6 +151,49 @@ income.sex_fisher
 
 # 3.1 Descriptive Statistics for Covariates
 
+## BF
+
+### Age
+```{r BF_age_ANOVA, echo=FALSE}
+age_BreastFed_3cat_anova
+age_BreastFed_3cat_mean
+age_BreastFed_3cat_sd
+```
+\FloatBarrier 
+
+### TIV
+```{r BF_TIV_anova, echo=FALSE}
+age_BreastFed_3cat_anova
+age_BreastFed_3cat_mean
+age_BreastFed_3cat_sd
+```
+\FloatBarrier 
+
+### Sex
+```{r BF_sex_fisher, echo=FALSE}
+sex.BreastFed_3cat_fisher
+```
+\FloatBarrier 
+
+### Maternal Education
+```{r BF_mEd_fisher, echo=FALSE}
+mED.BreastFed_3cat_fisher
+```
+\FloatBarrier 
+
+### Income
+```{r BF_incom_chi2, echo=FALSE}
+income.BreastFed_3cat_chi
+```
+\FloatBarrier 
+
+### Premature
+```{r BF_premat_chi, echo=FALSE}
+premat.BreastFed_3cat_chi
+```
+\FloatBarrier 
+\clearpage
+
 ## SR
 
 ### Age

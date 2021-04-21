@@ -17,7 +17,7 @@ source('functions.R')
 #summary data for task
 
 #load data
-BFstructural_Dat = read.csv('/Data/BFstructural_AllData.csv', na.strings = 'NA')
+BFstructural_Dat = read.csv('/Data/BFstructural_Alldata.csv', na.strings = 'NA')
 
 #now have to specify factor because variables with character values no longer defualt to class factor
 BFstructural_Dat$sex = factor(BFstructural_Dat$sex)
