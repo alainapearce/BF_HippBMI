@@ -26,9 +26,6 @@ This is a R markdown document that will generate a .pdf of the results.
 Note: if running this file outside the docker image, exact replication of results is not garenteed. If project is first loaded, then package versions will match due to the use of the package renv (will load project specific version of R packages listed in renv.lock). However, this will not resolve opperating system dependent discrepencies.
 
 ### Docker Image
-The docker image is hosted on Docker Hub
-
-
 
 bf_structural-AJCNsubmission.tar is the docker image for this project and should replicate reported results. To use image, download to your system and use the terminal to execute the following steps:
 
