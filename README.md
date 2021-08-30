@@ -27,11 +27,11 @@ Note: if running this file outside the docker image, exact replication of result
 
 ### Docker Image
 
-bf_structural-AJCNsubmission.tar is the docker image for this project and should replicate reported results. To use image, download to your system and use the terminal to execute the following steps:
+dockerfile is the docker file to setup a docker image for this project. To use , download to your system and use the terminal to execute the following steps:
 
-1) Load docker image: 
-        docker load bf_structural-AJCNsubmission.tar
+1) Build docker image:
+        docker build -t dockerfile .
 
 2) Run docker image: 
-        docker run -v "$(pwd):/project/output" bf_structural-AJCNsubmission
+        docker run -v "$(pwd):/project/output" dockerfile
         Note: if on windows machine, you will need to use different syntax for $(pwd) part of the command
