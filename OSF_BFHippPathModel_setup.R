@@ -2,8 +2,8 @@
 ## you may need to install these libraries. 
 ## to do so type: install.packages('packagename')
 library(reporttools)
-library(car)
 library(xtable)
+library(car)
 library(stats)
 library(lavaan)
 library(lsr)
@@ -11,22 +11,29 @@ library(psych)
 library(childsds)
 library(emmeans)
 library(reshape2)
-library(lme4)
+
+
+#set working directory to location of script--not needed when called 
+#through Rmarkdown doc. Uncomment below if running locally/manually
+# this.dir = getActiveDocumentContext()$path
+# setwd(dirname(this.dir))
 
 source('functions.R')
+##load datasets
+#run if have not compiled the following datasets:
+#1)1_CompileData.R
 #summary data for task
 
 #load data
-BFstructural_Dat = read.csv('/Data/BFstructural_Alldata.csv', na.strings = 'NA')
+BFstructural_Dat = read.csv('Data/BFstructural_AllData.csv', na.strings = 'NA')
 
 #now have to specify factor because variables with character values no longer defualt to class factor
 BFstructural_Dat$sex = factor(BFstructural_Dat$sex)
 
 #ratings
-BFstructural_ICCratings = read.csv('/Data/MRIstruct_FinalRatings_ICC.csv')
+BFstructural_ICCratings = read.csv('Data/MRIstruct_FinalRatings_ICC.csv')
 
 # percent above overweight were generated with code below and package childsds
-BFstructural_Dat$cAge_yr = BFstructural_Dat$cAge_mo/12
 BFstructural_Dat$cdc_bmi85 = NA
 BFstructural_Dat$cdc_bmi95 = NA
 
@@ -144,8 +151,8 @@ income.sex_fisher = fisher.test(income.sex_tab)
 BFstructural_Dat$BreastFed_3cat = ifelse(BFstructural_Dat$BreastFed_wk == '>24 wks',  '>6mo', ifelse(BFstructural_Dat$BreastFed_wk == '16-24 wks', '4-6mo', ifelse(BFstructural_Dat$BreastFed_wk == '4-12 wks' | BFstructural_Dat$BreastFed_wk == 'Never', '0-3mo', ifelse(as.numeric(BFstructural_Dat$BreastFed_wk) > 24, '>6mo', ifelse(as.numeric(BFstructural_Dat$BreastFed_wk) >= 16, '4-6mo', ifelse(as.numeric(BFstructural_Dat$BreastFed_wk) < 16, '0-3mo', as.character(BFstructural_Dat$BreastFed_wk)))))))
 
 BreastFed_3cat_tab = xtabs(~BreastFed_3cat, data = BFstructural_Dat)
-BreastFed_3cat.sex_tab = xtabs(~BreastFed_3cat + sex, data = BFstructural_Dat)
-BreastFed_3cat.sex_chi = chisq.test(BreastFed_3cat.sex_tab)
+BreastFed_3cat_sex_tab = xtabs(~BreastFed_3cat + sex, data = BFstructural_Dat)
+BreastFed_3cat_sex_chi = chisq.test(BreastFed_3cat_sex_tab)
 
 #####################################
 ####                            
@@ -161,20 +168,20 @@ psych::alpha(BFstructural_Dat[c('cebq3_numRev', 'cebq17_num', 'cebq21_num', 'ceb
 ####    Set up Structural Data  ####
 ####                            
 #####################################
-BFstructural_ROIdat_all = read.csv('/Data/TPMall_BFstructural_ROI_dat_neuromorphometrics.csv')
+BFstructural_ROIdat_all = read.csv('Data/TPMall_BFstructural_ROI_dat_neuromorphometrics.csv')
 
 BFstructural_ROIdat_hip = BFstructural_ROIdat_all[BFstructural_ROIdat_all$region == 'rHip' | BFstructural_ROIdat_all$region == 'lHip', ]
 
 BFstructural_ROIdat_hip_wide = dcast(BFstructural_ROIdat_hip, parID~region + ids, value.var = 'vgm')
 
 #add QC data 
-BFstructural_covars = read.csv('/Data/BFstructural_covars.csv')
+BFstructural_covars = read.csv('Data/BFstructural_covars.csv')
 
-BFstructural_ROIdat_hip_wide = merge(BFstructural_ROIdat_hip_wide, BFstructural_covars[c(1:4, 5, 18)], by = 'parID')
+BFstructural_ROIdat_hip_wide = merge(BFstructural_ROIdat_hip_wide, BFstructural_covars[c(1:4, 5, 17)], by = 'parID')
 names(BFstructural_ROIdat_hip_wide)[c(4, 7)] = c('StudyID', 'LabID')
 
 #merge into primary dataset
-BFstructural_Dat = merge(BFstructural_Dat, BFstructural_ROIdat_hip_wide, by = 'StudyID')
+BFstructural_Dat = merge(BFstructural_Dat, BFstructural_ROIdat_hip_wide, by = c('StudyID', 'LabID'))
 
 #####################################
 ####                            
@@ -183,6 +190,12 @@ BFstructural_Dat = merge(BFstructural_Dat, BFstructural_ROIdat_hip_wide, by = 'S
 #####################################
 
 #ICC
+wrap_kappa = cohen.kappa(data.frame(BFstructural_ICCratings$Wrap_R1, BFstructural_ICCratings$Wrap_R2))
+clip_kappa = cohen.kappa(data.frame(BFstructural_ICCratings$Clipped_R1, BFstructural_ICCratings$Clipped_R2))
+ringing_kappa = cohen.kappa(data.frame(BFstructural_ICCratings$Ringing_R1, BFstructural_ICCratings$Ringing_R2))
+ghost_kappa = cohen.kappa(data.frame(BFstructural_ICCratings$Ghosting_R1, BFstructural_ICCratings$Ghosting_R2))
+blur_kappa = cohen.kappa(data.frame(BFstructural_ICCratings$Blurriness_R1, BFstructural_ICCratings$Blurriness_R2))
+
 wrap_ICC = ICC(data.frame(BFstructural_ICCratings$Wrap_R1, BFstructural_ICCratings$Wrap_R2), missing = TRUE, lmer = TRUE)
 clip_ICC = ICC(data.frame(BFstructural_ICCratings$Clipped_R1, BFstructural_ICCratings$Clipped_R2), missing = TRUE, lmer = TRUE)
 ringing_ICC = ICC(data.frame(BFstructural_ICCratings$Ringing_R1, BFstructural_ICCratings$Ringing_R2), missing = TRUE, lmer = TRUE)
@@ -377,21 +390,19 @@ BFstructural_Dat$cPreMat_dummy = ifelse(BFstructural_Dat$cPreMat == 'No', 0, 1)
 BFstructural_Dat$Study = gsub("_.*", "", BFstructural_Dat$StudyID)
 BFstructural_Dat$Study_dummy = ifelse(BFstructural_Dat$Study == 'FBS', 0, ifelse(BFstructural_Dat$Study == 'DMK', 1, ifelse(BFstructural_Dat$Study == 'TestRetest', 2, ifelse(BFstructural_Dat$Study == 'cceb', 3, 4))))
 
-BFstructural_Dat$TIV_scale = scale(BFstructural_Dat$TIV)
-
 ## Left Hipp ####
 HippL_pathmod <-'
 # c path
 cebq_SR ~ mEducation_dummy + income_dummy + cPreMat_dummy + c*BreastFed_3cat_dummy
 
 # b1/a2 path
-cebq_SR ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + b1a2*lHip_21
+cebq_SR ~ TIV + IQR + Study_dummy + cAge_yr + sex_dummy + b1a2*lHip_21
 
 # a1 path
-lHip_21 ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy
+lHip_21 ~ TIV + IQR + Study_dummy + cAge_yr + sex_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy
 
 # c2 model
-cdc_p85th ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + c2*lHip_21
+cdc_p85th ~ TIV + IQR + Study_dummy + cAge_yr + sex_dummy + c2*lHip_21
 
 # b2 prime model
 cdc_p85th ~  mEducation_dummy + income_dummy + cPreMat_dummy + b2*cebq_SR
@@ -401,10 +412,18 @@ cdc_p85th ~  mEducation_dummy + income_dummy + cPreMat_dummy + b2*cebq_SR
 lHipMed_BF2SR := a1*b1a2
 SRMed_lHip2p85th := b1a2*b2
 
+
+#total effect
+lHip_BF2SR_total := c + lHipMed_BF2SR
+SR_lHip2p85th_total := c2 + SRMed_lHip2p85th
+
+#proportion med
+lHip_propmed := lHipMed_BF2SR/lHip_BF2SR_total
+SR_propmed := SRMed_lHip2p85th/SR_lHip2p85th_total
 '
 
 # fit the model
-HippL_pathmod_fit <- sem(HippL_pathmod, data = BFstructural_Dat)
+HippL_pathmod_fit <- sem(HippL_pathmod, data = BFstructural_Dat, estimator = "ML")
 HippL_pathmod_summary <- summary(HippL_pathmod_fit, fit.measures = T, rsquare=TRUE)
 
 # post-hoc for breastfeeding
@@ -422,13 +441,13 @@ HippR_pathmod <-'
 cebq_SR ~ mEducation_dummy + income_dummy + cPreMat_dummy + c*BreastFed_3cat_dummy
 
 # b1/a2 path
-cebq_SR ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + b1a2*rHip_22
+cebq_SR ~ TIV + IQR + Study_dummy + cAge_yr + sex_dummy + b1a2*rHip_22
 
 # a1 path
-rHip_22 ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy
+rHip_22 ~ TIV + IQR + Study_dummy + cAge_yr + sex_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy
 
 # c2 model
-cdc_p85th ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + c2*rHip_22
+cdc_p85th ~ TIV + IQR + Study_dummy + cAge_yr + sex_dummy + c2*rHip_22
 
 # b2 prime model
 cdc_p85th ~  mEducation_dummy + income_dummy + cPreMat_dummy + b2*cebq_SR
@@ -438,7 +457,14 @@ cdc_p85th ~  mEducation_dummy + income_dummy + cPreMat_dummy + b2*cebq_SR
 rHipMed_BF2SR := a1*b1a2
 SRMed_rHip2p85th := b1a2*b2
 
-'
+
+#total effect
+rHip_BF2SR_total := c + rHipMed_BF2SR
+SR_rHip2p85th_total := c2 + SRMed_rHip2p85th
+
+#proportion med
+rHip_propmed := rHipMed_BF2SR/rHip_BF2SR_total
+SR_propmed := SRMed_rHip2p85th/SR_rHip2p85th_total'
 
 # fit the model
 HippR_pathmod_fit <- sem(HippR_pathmod, data = BFstructural_Dat, estimator = "ML")
@@ -460,80 +486,39 @@ RHipp_BreastFeedingCat_sd = means.function(BFstructural_Dat, BFstructural_Dat$rH
 ####        /   \
 ####      BF -> SR -> cdc_p85th  
 ####                            
-####    sensitivity: add direct effect of BF
+####    senisitivity: add income and mEd to BF - HIP path
 #####################################
-## Left Hipp ####
-HippL_dirBF_pathmod <-'
-# c path
-cebq_SR ~ mEducation_dummy + income_dummy + cPreMat_dummy + c*BreastFed_3cat_dummy
 
-# b1/a2 path
-cebq_SR ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + b1a2*lHip_21
-
-# a1 path
-lHip_21 ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy
-
-# c2 model
-cdc_p85th ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + c2*lHip_21
-
-# b2 prime model
-cdc_p85th ~  mEducation_dummy + income_dummy + cPreMat_dummy + b2*cebq_SR + BreastFed_3cat_dummy
-
-'
-
-# fit the model
-HippL_dirBF_pathmod_fit <- sem(HippL_dirBF_pathmod, data = BFstructural_Dat, estimator = "ML")
-HippL_dirBF_pathmod_summary <- summary(HippL_dirBF_pathmod_fit, fit.measures = T, rsquare=TRUE)
-
-## Right Hipp ####
-HippR_dirBF_pathmod <-'
-# c path
-cebq_SR ~ mEducation_dummy + income_dummy + cPreMat_dummy + c*BreastFed_3cat_dummy
-
-# b1/a2 path
-cebq_SR ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + b1a2*rHip_22
-
-# a1 path
-rHip_22 ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy
-
-# c2 model
-cdc_p85th ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + c2*rHip_22
-
-# b2 prime model
-cdc_p85th ~  mEducation_dummy + income_dummy + cPreMat_dummy + b2*cebq_SR + BreastFed_3cat_dummy
-
-'
-
-# fit the model
-HippR_dirBF_pathmod_fit <- sem(HippR_dirBF_pathmod, data = BFstructural_Dat, estimator = "ML")
-HippR_dirBF_pathmod_summary <- summary(HippR_dirBF_pathmod_fit, fit.measures = T, rsquare=TRUE)
-
-#####################################
-####                            
-####    Path Models Mediation 
-####          HIP
-####        /   \
-####      BF -> SR -> cdc_p85th  
-####                            
-####    sensitivity: add income and mEd to BF - HIP path
-#####################################
 ## Left Hipp ####
 HippL_SensitivityTest <-'
 # c path
 cebq_SR ~ mEducation_dummy + income_dummy + cPreMat_dummy + c*BreastFed_3cat_dummy
 
 # b1/a2 path
-cebq_SR ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + b1a2*lHip_21
+cebq_SR ~ TIV + IQR + Study_dummy + cAge_yr + sex_dummy + b1a2*lHip_21
 
 # a1 path
-lHip_21 ~  TIV_scale + Study_dummy + cAge_yr + sex_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy + income_dummy
+lHip_21 ~  mEducation_dummy + income_dummy + TIV + IQR + Study_dummy + cAge_yr + sex_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy
 
 # c2 model
-cdc_p85th ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + c2*lHip_21
+cdc_p85th ~ TIV + IQR + Study_dummy + cAge_yr + sex_dummy + c2*lHip_21
 
 # b2 prime model
 cdc_p85th ~  mEducation_dummy + income_dummy + cPreMat_dummy + b2*cebq_SR
 
+
+#indirect effects
+lHipMed_BF2SR := a1*b1a2
+SRMed_lHip2p85th := b1a2*b2
+
+
+#total effect
+lHip_BF2SR_total := c + lHipMed_BF2SR
+SR_lHip2p85th_total := c2 + SRMed_lHip2p85th
+
+#proportion med
+lHip_propmed := lHipMed_BF2SR/lHip_BF2SR_total
+SR_propmed := SRMed_lHip2p85th/SR_lHip2p85th_total
 '
 
 # fit the model
@@ -546,13 +531,13 @@ HippR_SensitivityTest <-'
 cebq_SR ~ mEducation_dummy + income_dummy + cPreMat_dummy + c*BreastFed_3cat_dummy
 
 # b1/a2 path
-cebq_SR ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + b1a2*rHip_22
+cebq_SR ~ TIV + IQR + Study_dummy + cAge_yr + sex_dummy + b1a2*rHip_22
 
 # a1 path
-rHip_22 ~  TIV_scale + Study_dummy + cAge_yr + sex_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy + income_dummy
+rHip_22 ~  mEducation_dummy + income_dummy + TIV + IQR + Study_dummy + cAge_yr + sex_dummy + cPreMat_dummy + a1*BreastFed_3cat_dummy
 
 # c2 model
-cdc_p85th ~ TIV_scale + Study_dummy + cAge_yr + sex_dummy + c2*rHip_22
+cdc_p85th ~ TIV + IQR + Study_dummy + cAge_yr + sex_dummy + c2*rHip_22
 
 # b2 prime model
 cdc_p85th ~  mEducation_dummy + income_dummy + cPreMat_dummy + b2*cebq_SR
@@ -561,7 +546,15 @@ cdc_p85th ~  mEducation_dummy + income_dummy + cPreMat_dummy + b2*cebq_SR
 #indirect effects
 rHipMed_BF2SR := a1*b1a2
 SRMed_rHip2p85th := b1a2*b2
-'
+
+
+#total effect
+rHip_BF2SR_total := c + rHipMed_BF2SR
+SR_rHip2p85th_total := c2 + SRMed_rHip2p85th
+
+#proportion med
+rHip_propmed := rHipMed_BF2SR/rHip_BF2SR_total
+SR_propmed := SRMed_rHip2p85th/SR_rHip2p85th_total'
 
 # fit the model
 HippR_SensitivityTest_fit <- sem(HippR_SensitivityTest, data = BFstructural_Dat, estimator = "ML")

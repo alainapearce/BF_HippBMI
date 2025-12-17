@@ -34,20 +34,20 @@ header-includes:
 
 <!-- Note: the first statement is the langauge (i.e., r), then the label for the chunck. After this you can put extra statements like echo (show code and outcome), include (show outcome) -->
 
-```{r setup, echo = FALSE}
-knitr::opts_chunk$set(tidy = TRUE, tidy.opts = list(comment = FALSE), echo = TRUE, fig.width=6, fig.height=4, fig.path='BreastFeeding_Hipp/fig-', echo=FALSE, warning=FALSE, message=FALSE, comment = NA, root.dir = '/project')
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(tidy = TRUE, tidy.opts = list(comment = FALSE), echo = TRUE, fig.width=6, fig.height=4, fig.path='BreastFeeding_Hipp/fig-', echo=FALSE, warning=FALSE, message=FALSE, comment = NA)
 ```
 
 <!-- load startup file and any extra packages -->
-```{r load, echo=FALSE, include = FALSE}
-source('BFstructural_docker_setup.R')
+```{r load, echo=FALSE, include=FALSE}
+source('OSF_BF.HippPathModel_setup.R')
 library(knitr)
 options(knitr.table.format = "latex")
 library(kableExtra)
 
 ```
 
-\clearpage 
+<!-- The number of hashtags (#) will determine the boldness of heading -->
 
 # Participant Characteristics
 
@@ -99,129 +99,71 @@ library(kableExtra)
 \FloatBarrier
 \newpage
 
-## Age
-```{r Age_ttest_sex, echo=FALSE}
+<!-- Age -->
+```{r Age_ttest_sex, echo=FALSE, include=FALSE}
 age_sex_t
 ```
-\FloatBarrier
 
-## BMI
-```{r BMI_ttest_sex, echo=FALSE}
+<!-- BMI -->
+```{r BMI_ttest_sex, echo=FALSE, include=FALSE}
 BMI_sex_t
 ```
-\FloatBarrier
 
-## BMI percentile
-```{r BMIp_ttest_sex, echo=FALSE}
+<!-- BMI percentile -->
+```{r BMIp_ttest_sex, echo=FALSE, include=FALSE}
 BMIp_sex_t
 ```
-\FloatBarrier
 
-## Maternal Ed
-```{r mED_chi_sex, echo=FALSE}
+<!-- Maternal Ed -->
+```{r mED_chi_sex, echo=FALSE, include=FALSE}
 mED.sex_fisher
 ```
-\FloatBarrier
 
-## Paternal Ed
-```{r pED_chi_sex, echo=FALSE}
+<!-- Paternal Ed -->
+```{r pED_chi_sex, echo=FALSE, include=FALSE}
 pED.sex_fisher
 ```
-\FloatBarrier
 
-## Race
-```{r race_chi_sex, echo=FALSE}
+<!-- Race -->
+```{r race_chi_sex, echo=FALSE, include=FALSE}
 race.sex_fisher
 ```
-\FloatBarrier
 
-## Ethnicity
-```{r ethnicity_chi_sex, echo=FALSE}
+<!-- Ethnicity -->
+```{r ethnicity_chi_sex, echo=FALSE, include=FALSE}
 ethnicity.sex_fisher
 ```
-\FloatBarrier
 
-## SES
-```{r SES_chi_sex, echo=FALSE}
+<!-- SES -->
+```{r SES_chi_sex, echo=FALSE, include=FALSE}
 income.sex_fisher
 ```
 
-\FloatBarrier 
-\clearpage
+# 3.1 Descriptive
 
-# 3.1 Descriptive Statistics for Covariates
-
-## BF
-
-### Age
-```{r BF_age_ANOVA, echo=FALSE}
-age_BreastFed_3cat_anova
-age_BreastFed_3cat_mean
-age_BreastFed_3cat_sd
-```
-\FloatBarrier 
-
-### TIV
-```{r BF_TIV_anova, echo=FALSE}
-age_BreastFed_3cat_anova
-age_BreastFed_3cat_mean
-age_BreastFed_3cat_sd
-```
-\FloatBarrier 
-
-### Sex
-```{r BF_sex_fisher, echo=FALSE}
-sex.BreastFed_3cat_fisher
-```
-\FloatBarrier 
-
-### Maternal Education
-```{r BF_mEd_fisher, echo=FALSE}
-mED.BreastFed_3cat_fisher
-```
-\FloatBarrier 
-
-### Income
-```{r BF_incom_chi2, echo=FALSE}
-income.BreastFed_3cat_chi
-```
-\FloatBarrier 
-
-### Premature
-```{r BF_premat_chi, echo=FALSE}
-premat.BreastFed_3cat_chi
-```
-\FloatBarrier 
-\clearpage
-
-## SR
-
-### Age
-```{r SR_age_cor, echo=FALSE}
+<!-- ## SR -->
+<!-- #age -->
+```{r SR_age_cor, echo=FALSE, include=FALSE}
 cebq_SR_age_cor.test
 ```
-\FloatBarrier 
 
-### TIV
-```{r SR_TIV_cor, echo=FALSE}
+<!-- #TIV -->
+```{r SR_TIV_cor, echo=FALSE, include=FALSE}
 cebq_SR_TIV_cor.test
 ```
-\FloatBarrier 
 
-### Sex
-```{r SR_sex_ttest, echo=FALSE}
+<!-- #sex -->
+```{r SR_sex_ttest, echo=FALSE, include=FALSE}
 cebq_SR_sex_t.test
 ```
-\FloatBarrier 
 
-### Maternal Education
-```{r SR_mEd_anova, echo=FALSE}
+<!-- # maternal education -->
+```{r SR_mEd_anova, echo=FALSE, include=FALSE}
 cebq_SR_mEducation_anova
 ```
-\FloatBarrier 
 
-### Income
-```{r SR_incom_anova, echo=FALSE}
+<!-- # Income -->
+```{r SR_incom_anova, echo=FALSE, include=FALSE}
 cebq_SR_income_anova
 
 groupDif_SR_income = emmeans(lm(cebq_SR~income_3cat, data = BFstructural_Dat), specs = pairwise~income_3cat, adjust = "none")
@@ -230,37 +172,30 @@ cebq_SR_income_mean = means.function(BFstructural_Dat, BFstructural_Dat$cebq_SR,
 
 cebq_SR_income_sd = sd.function(BFstructural_Dat, BFstructural_Dat$cebq_SR, BFstructural_Dat$income_3cat)
 ```
-\FloatBarrier 
 
-### Premature
-```{r SR_premat_ttest, echo=FALSE}
+<!-- #premature -->
+```{r SR_premat_ttest, echo=FALSE, include=FALSE}
 cebq_SR_premat_t.test
 ```
-\FloatBarrier 
-\clearpage
 
-## %BMIp85
-
-### Age
-```{r BMIp85BMI_age_cor, echo=FALSE}
+<!-- ##BMI:p85BMI -->
+<!-- #age -->
+```{r BMIp85BMI_age_cor, echo=FALSE, include=FALSE}
 BMIp85BMI_age_cor.test
 ```
-\FloatBarrier 
 
-### TIV
-```{r BMIp85BMI_TIV_cor, echo=FALSE}
+<!-- #TIV -->
+```{r BMIp85BMI_TIV_cor, echo=FALSE, include=FALSE}
 BMIp85BMI_TIV_cor.test
 ```
-\FloatBarrier 
 
-### Sex
-```{r BMIp85BMI_sex_ttest, echo=FALSE}
+<!-- #sex -->
+```{r BMIp85BMI_sex_ttest, echo=FALSE, include=FALSE}
 BMIp85BMI_sex_t.test
 ```
-\FloatBarrier 
 
-### Maternal Education
-```{r BMIp85BMI_mEd_anova, echo=FALSE}
+<!-- # maternal education -->
+```{r BMIp85BMI_mEd_anova, echo=FALSE, include=FALSE}
 BMIp85BMI_mEducation_anova
 
 
@@ -270,49 +205,40 @@ BMIp85BMI_mEducation_mean = means.function(BFstructural_Dat, BFstructural_Dat$cd
 
 BMIp85BMI_mEducation_sd = sd.function(BFstructural_Dat, BFstructural_Dat$cdc_p85th, BFstructural_Dat$mEducation_cat)
 ```
-\FloatBarrier 
 
-### Income
-```{r BMIp85BMI_incom_anova, echo=FALSE}
+<!-- # Income -->
+```{r BMIp85BMI_incom_anova, echo=FALSE, include=FALSE}
 BMIp85BMI_income_anova
 ```
-\FloatBarrier 
 
-### Prematurity
-```{r BMIp85BMI_premat_ttest, echo=FALSE}
+<!-- #premature -->
+```{r BMIp85BMI_premat_ttest, echo=FALSE, include=FALSE}
 BMIp85BMI_premat_t.test
 ```
-\FloatBarrier 
-\clearpage
 
-## Left Hippocampus
-
-### Age
-```{r lHip_age_cor, echo=FALSE}
+<!-- ##Left Hippocampus -->
+<!-- #age -->
+```{r lHip_age_cor, echo=FALSE, include=FALSE}
 lHip_age_cor.test
 ```
-\FloatBarrier 
 
-### TIV
-```{r lHip_TIV_cor, echo=FALSE}
+<!-- #TIV -->
+```{r lHip_TIV_cor, echo=FALSE, include=FALSE}
 lHip_TIV_cor.test
 ```
-\FloatBarrier 
 
-### Sex
-```{r lHip_sex_ttest, echo=FALSE}
+<!-- #sex -->
+```{r lHip_sex_ttest, echo=FALSE, include=FALSE}
 lHip_sex_t.test
 ```
-\FloatBarrier 
 
-### Maternal Education
-```{r lHip_mEd_anova, echo=FALSE}
+<!-- # maternal education -->
+```{r lHip_mEd_anova, echo=FALSE, include=FALSE}
 lHip_mEducation_anova
 ```
-\FloatBarrier 
 
-### Income
-```{r lHip_incom_anova, echo=FALSE}
+<!-- # Income -->
+```{r lHip_incom_anova, echo=FALSE, include=FALSE}
 lHip_income_anova
 
 groupDif_lHip_income = emmeans(lm(lHip_21~ income_3cat, data = BFstructural_Dat), specs = pairwise~income_3cat, adjust = "none")
@@ -321,43 +247,35 @@ lHip_income_mean = means.function(BFstructural_Dat, BFstructural_Dat$lHip_21, BF
 
 lHip_income_sd = sd.function(BFstructural_Dat, BFstructural_Dat$lHip_21, BFstructural_Dat$income_3cat)
 ```
-\FloatBarrier 
 
-### Prematurity
-```{r lHip_premat_ttest, echo=FALSE}
+<!-- #premature -->
+```{r lHip_premat_ttest, echo=FALSE, include=FALSE}
 lHip_premat_t.test
 ```
-\FloatBarrier 
-\clearpage
 
-## Right Hippocampus
-
-### Age
-```{r rHip_age_cor, echo=FALSE}
+<!-- ## Right Hippocampus  -->
+<!-- #age -->
+```{r rHip_age_cor, echo=FALSE, include=FALSE}
 rHip_age_cor.test
 ```
-\FloatBarrier 
 
-### TIV
-```{r rHip_TIV_cor, echo=FALSE}
+<!-- #TIV -->
+```{r rHip_TIV_cor, echo=FALSE, include=FALSE}
 rHip_TIV_cor.test
 ```
-\FloatBarrier 
 
-### Sex
-```{r rHip_sex_ttest, echo=FALSE}
+<!-- #sex -->
+```{r rHip_sex_ttest, echo=FALSE, include=FALSE}
 rHip_sex_t.test
 ```
-\FloatBarrier 
 
-### Maternal Education
-```{r rHip_mEd_anova, echo=FALSE}
+<!-- # maternal education -->
+```{r rHip_mEd_anova, echo=FALSE, include=FALSE}
 rHip_mEducation_anova
 ```
-\FloatBarrier 
 
-### Income
-```{r rHip_incom_anova, echo=FALSE}
+<!-- # Income -->
+```{r rHip_incom_anova, echo=FALSE, include=FALSE}
 rHip_income_anova
 
 groupDif_rHip_income = emmeans(lm(rHip_22~income_3cat, data = BFstructural_Dat), specs = pairwise~income_3cat, adjust = "none")
@@ -366,20 +284,15 @@ rHip_income_mean = means.function(BFstructural_Dat, BFstructural_Dat$rHip_22, BF
 
 rHip_income_sd = sd.function(BFstructural_Dat, BFstructural_Dat$rHip_22, BFstructural_Dat$income_3cat)
 ```
-\FloatBarrier 
 
-### Prematurity
-
-```{r rHip_premat_ttest, echo=FALSE}
+<!-- #premature -->
+```{r rHip_premat_ttest, echo=FALSE, include=FALSE}
 rHip_premat_t.test
 ```
 
-\clearpage
-\FloatBarrier 
-
 # 3.2 Path Analyses
-
 ## 3.2.1 Path Model for Left Hippocampus (Figure 1B). 
+
 
 \FloatBarrier
 
@@ -389,11 +302,10 @@ kable(HippL_pathmod_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Stat
 \FloatBarrier
 
 ```{r HippL_pathmod_PE, echo=FALSE, results='asis'}
-kable(HippL_pathmod_summary$PE[c(1:24, 64:65), c(1:3, 6:9)], digits = 3, caption = "Parameters for Model: BF -> SR (L Hipp Med) -> p85th BMI", booktabs=TRUE)
+kable(HippL_pathmod_summary$PE[c(1:35), c(1:3, 6:9)], digits = 3, caption = "Parameters for Model: BF -> SR (L Hipp Med) -> p85th BMI", booktabs=TRUE)
 ```
 \FloatBarrier
 
-### Post-Hoc Tests for Breastfeeding
 ```{r HippL_pathmod_posthoc, echo=FALSE}
 # post-hoc for breastfeeding
 ##Breastfeeding groups t-tests
@@ -407,32 +319,16 @@ LHipp_BreastFeedingCat_sd
 
 \clearpage
 
-## 3.2.1 Path Model for Left Hippocampus: Sensitivity Test - Effect of Breastfeeding
+
 \FloatBarrier
 
-```{r HippL_pathmod_SensTest_BF_fit, echo=FALSE, results='asis'}
-kable(HippL_dirBF_pathmod_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Statistics for Sensitivity Test: direct effect of breastfeeding on p85 BMI", booktabs=TRUE) 
+```{r HippL_pathmod_SensTest_fit, echo=FALSE, results='asis'}
+kable(HippL_SensitivityTest_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Statistics for Model: BF -> SR (L Hipp Med) -> p85th BMI", booktabs=TRUE) 
 ```
 \FloatBarrier
 
-```{r HippL_pathmod_SensTest_BF_PE, echo=FALSE, results='asis'}
-kable(HippL_dirBF_pathmod_summary$PE[c(1:25), c(1:3, 6:9)], digits = 3, caption = "Parameters for Sensitivity Test: direct effect of breastfeeding on p85 BMI", booktabs=TRUE)
-```
-\FloatBarrier
-
-\clearpage
-
-## 3.2.1 Path Model for Left Hippocampus: Sensitivity Test - Adjusting Hippocampal Volume for Income
-
-\FloatBarrier
-
-```{r HippL_pathmod_SensTest_HipAssoc_fit, echo=FALSE, results='asis'}
-kable(HippL_SensitivityTest_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Statistics for Sensitivity Test: adjusting hippocampal volume for income", booktabs=TRUE) 
-```
-\FloatBarrier
-
-```{r HippL_pathmod_SensTest_HipAssoc_PE, echo=FALSE, results='asis'}
-kable(HippL_SensitivityTest_summary$PE[c(1:25), c(1:3, 6:9)], digits = 3, caption = "Parameters for Sensitivity Test: adjusting hippocampal volume for income", booktabs=TRUE)
+```{r HippL_pathmod_SensTest_PE, echo=FALSE, results='asis'}
+kable(HippL_SensitivityTest_summary$PE[c(1:35), c(1:3, 6:9)], digits = 3, caption = "Parameters for Model: BF -> SR (L Hipp Med) -> p85th BMI", booktabs=TRUE)
 ```
 \FloatBarrier
 
@@ -446,11 +342,8 @@ kable(HippR_pathmod_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Stat
 \FloatBarrier
 
 ```{r HippR_pathmod_PE, echo=FALSE, results='asis'}
-kable(HippR_pathmod_summary$PE[c(1:24, 64:65), c(1:3, 6:9)], digits = 3, caption = "Parameters for Model: BF -> SR (R Hipp Med) -> p85th BMI", booktabs=TRUE) 
+kable(HippR_pathmod_summary$PE[c(1:35), c(1:3, 6:9)], digits = 3, caption = "Parameters for Model: BF -> SR (R Hipp Med) -> p85th BMI", booktabs=TRUE) 
 ```
-\FloatBarrier
-
-### Post-Hoc Tests for Breastfeeding
 
 ```{r HippR_pathmod_posthoc, echo=FALSE}
 # post-hoc for breastfeeding
@@ -463,28 +356,13 @@ RHipp_ttest_0t3mo_g6mo
 RHipp_BreastFeedingCat_sd
 ```
 
-\clearpage
-
-## 3.2.1 Path Model for Right Hippocampus: Sensitivity Test - Direct Effect of Breastfeeding
 \FloatBarrier
 
-```{r HippR_pathmod_SensTest_BF_fit, echo=FALSE, results='asis'}
-kable(HippR_dirBF_pathmod_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Statistics for Sensitivity Test: direct effect of breastfeeding on p85 BMI", booktabs=TRUE) 
+```{r HippR_pathmod_SensTest_fit, echo=FALSE, results='asis'}
+kable(HippR_SensitivityTest_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Statistics for Model: BF -> SR (R Hipp Med) -> p85th BMI", booktabs=TRUE)
 ```
 \FloatBarrier
 
-```{r HippR_pathmod_SensTest_BF_PE, echo=FALSE, results='asis'}
-kable(HippR_dirBF_pathmod_summary$PE[c(1:25), c(1:3, 6:9)], digits = 3, caption = "Parameters for Sensitivity Test: direct effect of breastfeeding on p85 BMI", booktabs=TRUE)
-```
-\FloatBarrier
-## 3.2.1 Path Model for Right Hippocampus: Sensitivity Test - Adjusting Hippocampal Volume for Income
-\FloatBarrier
-
-```{r HippR_pathmod_SensTest_HipAssoc_fit, echo=FALSE, results='asis'}
-kable(HippR_SensitivityTest_summary$FIT[c(3:11, 16:21)], digits = 3, caption = "Fit Statistics for Sensitivity Test: adjusting hippocampal volume for income", booktabs=TRUE)
-```
-\FloatBarrier
-
-```{r HippR_pathmod_SensTest_HipAssoc_PE, echo=FALSE, results='asis'}
-kable(HippR_SensitivityTest_summary$PE[c(1:25), c(1:3, 6:9)], digits = 3, caption = "Parameters for Sensitivity Test: adjusting hippocampal volume for income", booktabs=TRUE) 
+```{r HippR_pathmod_SensTest_PE, echo=FALSE, results='asis'}
+kable(HippR_SensitivityTest_summary$PE[c(1:35), c(1:3, 6:9)], digits = 3, caption = "Parameters for Model: BF -> SR (R Hipp Med) -> p85th BMI", booktabs=TRUE) 
 ```
